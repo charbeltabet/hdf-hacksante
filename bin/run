@@ -1,0 +1,16 @@
+#!/bin/bash
+set -e
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
+
+cd "$PROJECT_DIR"
+
+# Check if dependencies are installed
+if ! python3 -c "import flask, pyautogui" 2>/dev/null; then
+    echo "Installing dependencies..."
+    pip3 install -r requirements.txt
+fi
+
+echo "Starting on http://localhost:8000"
+python3 app.py
