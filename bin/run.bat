@@ -12,5 +12,5 @@ if ! python3 -c "import flask, pyautogui" 2>/dev/null; then
     pip3 install -r requirements.txt
 fi
 
-echo "Starting on http://localhost:8000"
+echo "Starting on http://localhost:7000"
 python3 app.py
