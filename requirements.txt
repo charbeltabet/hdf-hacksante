@@ -6,3 +6,4 @@ dspy
 boto3
 moondream
 Pillow
+tkinter
