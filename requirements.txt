@@ -1,2 +1,8 @@
 flask
 pyautogui
+openai
+python-dotenv
+dspy
+boto3
+moondream
+Pillow

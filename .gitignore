@@ -1,6 +1,11 @@
 __pycache__/
 tmp/
+venv/
+
 *.py[cod]
 *.pyo
 *.pyd
 *.pyc
+*.env
+
+.DS_Store
