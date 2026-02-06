@@ -1,0 +1,10 @@
+{
+  "Reason of Hospitalization": "Chest pain and shortness of breath",
+  "What is the history of the patient's illness?": "Patient experienced sudden chest pain 2 days ago with difficulty breathing. History of hypertension for 5 years.",
+  "Habitual Treatment": "Lisinopril",
+  "Habitual Treatment (text)": "Lisinopril 10mg daily, Aspirin 81mg daily",
+  "Specific procedure needed to take the medication": ["Anticoagulant"],
+  "Blood tests brought by the patient": ["biochemistry", "hematology"],
+  "imaging tests brought by the patient": ["echographie", "CT Scan"],
+  "Documents brought by the patient": ["prescription", "medical rapport"]
+}

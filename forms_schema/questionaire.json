@@ -1,0 +1,138 @@
+{
+  "description": "Medical observation form",
+  "form_fields": [
+    {
+      "field_type": "form_input",
+      "label": "Reason of Hospitalization",
+      "description": "What is the cause that lead to the patient being hospitalized? Why did they come to the hospital?",
+      "x": 122,
+      "y": 238
+    },
+    {
+      "field_type": "form_input",
+      "label": "What is the history of the patient's illness?",
+      "description": "What are the symptoms that the patient was feeling? What is the history of the illness? What are their symptoms?",
+      "x": 89,
+      "y": 343
+    },
+    {
+      "field_type": "searchable_select",
+      "label": "Habitual Treatment",
+      "description": "What is the patient's habitual treatment medication",
+      "coordinates": {
+        "dropdown": {
+          "x": 254,
+          "y": 537
+        },
+        "input": {
+          "x": 256,
+          "y": 554
+        },
+        "result": {
+          "x": 255,
+          "y": 572
+        }
+      }
+    },
+    {
+      "field_type": "form_input",
+      "label": "Habitual Treatment (text)",
+      "description": "Describe the patient's habitual treatment in text",
+      "x": 726,
+      "y": 552
+    },
+    {
+      "field_type": "checkbox_group",
+      "label": "Specific procedure needed to take the medication",
+      "description": "Does the patient take a certain medication that needs a specific procedure before being ingested?",
+      "options": [
+        {
+          "option_label": "Anticoagulant",
+          "x": 1301,
+          "y": 232
+        }
+      ]
+    },
+    {
+      "field_type": "checkbox_group",
+      "label": "Blood tests brought by the patient",
+      "description": "What do the tests brought by the patient show?",
+      "options": [
+        {
+          "option_label": "bacteriology",
+          "x": 1299,
+          "y": 297
+        },
+        {
+          "option_label": "biochemistry",
+          "x": 1299,
+          "y": 316
+        },
+        {
+          "option_label": "hematology",
+          "x": 1297,
+          "y": 333
+        },
+        {
+          "option_label": "histopathology",
+          "x": 1298,
+          "y": 348
+        }
+      ]
+    },
+    {
+      "field_type": "checkbox_group",
+      "label": "imaging tests brought by the patient",
+      "description": "What are the imaging results that the patient has brought with them ",
+      "options": [
+        {
+          "option_label": "echographie",
+          "x": 1298,
+          "y": 391
+        },
+        {
+          "option_label": "IRM",
+          "x": 1301,
+          "y": 410
+        },
+        {
+          "option_label": "Radiography",
+          "x": 1300,
+          "y": 428
+        },
+        {
+          "option_label": "Scintigraphy",
+          "x": 1299,
+          "y": 446
+        },
+        {
+          "option_label": "CT Scan",
+          "x": 1300,
+          "y": 458
+        }
+      ]
+    },
+    {
+      "field_type": "checkbox_group",
+      "label": "Documents brought by the patient",
+      "description": "What sort of documents did the patient bring with them ",
+      "options": [
+        {
+          "option_label": "Discharge Summary",
+          "x": 1300,
+          "y": 502
+        },
+        {
+          "option_label": "prescription",
+          "x": 1294,
+          "y": 517
+        },
+        {
+          "option_label": "medical rapport",
+          "x": 1302,
+          "y": 535
+        }
+      ]
+    }
+  ]
+}

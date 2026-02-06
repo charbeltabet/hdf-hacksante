@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "title": "Medical observation form",
+  "properties": {
+    "Reason of Hospitalization": {
+      "type": "string",
+      "description": "What is the cause that lead to the patient being hospitalized? Why did they come to the hospital?"
+    },
+    "What is the history of the patient's illness?": {
+      "type": "string",
+      "description": "What are the symptoms that the patient was feeling? What is the history of the illness? What are their symptoms?"
+    },
+    "Habitual Treatment": {
+      "type": "string",
+      "description": "What is the patient's habitual treatment medication"
+    },
+    "Habitual Treatment (text)": {
+      "type": "string",
+      "description": "Describe the patient's habitual treatment in text"
+    },
+    "Specific procedure needed to take the medication": {
+      "type": "array",
+      "description": "Does the patient take a certain medication that needs a specific procedure before being ingested?",
+      "items": {
+        "type": "string",
+        "enum": [
+          "Anticoagulant"
+        ]
+      },
+      "uniqueItems": true
+    },
+    "Blood tests brought by the patient": {
+      "type": "array",
+      "description": "What do the tests brought by the patient show?",
+      "items": {
+        "type": "string",
+        "enum": [
+          "bacteriology",
+          "biochemistry",
+          "hematology",
+          "histopathology"
+        ]
+      },
+      "uniqueItems": true
+    },
+    "imaging tests brought by the patient": {
+      "type": "array",
+      "description": "What are the imaging results that the patient has brought with them ",
+      "items": {
+        "type": "string",
+        "enum": [
+          "echographie",
+          "IRM",
+          "Radiography",
+          "Scintigraphy",
+          "CT Scan"
+        ]
+      },
+      "uniqueItems": true
+    },
+    "Documents brought by the patient": {
+      "type": "array",
+      "description": "What sort of documents did the patient bring with them ",
+      "items": {
+        "type": "string",
+        "enum": [
+          "Discharge Summary",
+          "prescription",
+          "medical rapport"
+        ]
+      },
+      "uniqueItems": true
+    }
+  },
+  "required": [
+    "Reason of Hospitalization",
+    "What is the history of the patient's illness?",
+    "Habitual Treatment",
+    "Habitual Treatment (text)",
+    "Specific procedure needed to take the medication",
+    "Blood tests brought by the patient",
+    "imaging tests brought by the patient",
+    "Documents brought by the patient"
+  ]
+}
