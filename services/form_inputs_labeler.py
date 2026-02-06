@@ -2,9 +2,11 @@ import tkinter as tk
 from tkinter import simpledialog
 from PIL import ImageTk
 import pyautogui
+import json
+import os
 from services.form_inputs_detection import Position, DetectedFormInput
 
-INPUT_TYPES = ["checkbox", "searchable_select", "text"]
+INPUT_TYPES = ["checkbox_group", "searchable_select", "form_input"]
 
 def ask_input_type(parent):
 	dialog = tk.Toplevel(parent)
@@ -24,14 +26,17 @@ def ask_input_type(parent):
 	return result.get()
 
 def run_labeler():
+	# Switch to next desktop (Windows: Win+Ctrl+Right)
+	pyautogui.hotkey('win', 'ctrl', 'right')
+	pyautogui.sleep(0.5)  # Wait for desktop switch animation
+
 	screenshot = pyautogui.screenshot()
 	screen_w, screen_h = screenshot.size
 
 	detected_inputs: list[DetectedFormInput] = []
-	current_points: list[Position] = []
 
 	root = tk.Tk()
-	root.title("Form Input Labeler - Click 4 points per field, then enter label")
+	root.title("Form Input Labeler")
 	root.attributes("-fullscreen", True)
 
 	canvas = tk.Canvas(root, width=screen_w, height=screen_h)
@@ -42,73 +47,201 @@ def run_labeler():
 
 	status_text = canvas.create_text(
 		screen_w // 2, 30,
-		text="Click 4 corners of a form field (0/4) | Press 'q' to finish",
+		text="Press 'n' to add a new field | Press 'q' to finish",
 		fill="yellow", font=("Helvetica", 18, "bold"),
 	)
 
 	def update_status():
-		count = len(current_points)
 		total = len(detected_inputs)
 		canvas.itemconfig(
 			status_text,
-			text=f"Click 4 corners of a form field ({count}/4) | {total} field(s) labeled | Press 'q' to finish",
+			text=f"Press 'n' to add a new field | {total} field(s) labeled | Press 'q' to finish",
 		)
 
-	def draw_point(x, y):
-		r = 5
-		canvas.create_oval(x - r, y - r, x + r, y + r, fill="red", outline="red")
+	def update_status_single_click():
+		canvas.itemconfig(
+			status_text,
+			text=f"Click the field position | Press 'q' to finish",
+		)
 
-	def draw_polygon(points: list[Position]):
-		coords = []
-		for p in points:
-			coords.extend([p.x, p.y])
-		coords.extend([points[0].x, points[0].y])
-		canvas.create_line(coords, fill="lime", width=2)
+	def draw_point(x, y, color="red"):
+		r = 5
+		canvas.create_oval(x - r, y - r, x + r, y + r, fill=color, outline=color)
+
+	def draw_label(x, y, label, description, field_type, extra_info=""):
+		text = f"{field_type}: {label}"
+		if description:
+			text += f"\n{description}"
+		if extra_info:
+			text += f"\n{extra_info}"
+		canvas.create_text(x + 10, y, text=text, anchor=tk.W, fill="lime", font=("Helvetica", 10, "bold"))
+
+	SEARCHABLE_SELECT_STEPS = ["dropdown", "input", "result"]
+	pending_field = {"active": False, "type": None, "label": "", "description": "", "step_index": 0, "coordinates": {}, "options": []}
+
+	def update_status_searchable():
+		step_index = pending_field["step_index"]
+		step_name = SEARCHABLE_SELECT_STEPS[step_index]
+		canvas.itemconfig(
+			status_text,
+			text=f"Searchable select: click the '{step_name}' position ({step_index + 1}/3) | Press 'q' to finish",
+		)
+
+	def update_status_checkbox_group():
+		count = len(pending_field["options"])
+		canvas.itemconfig(
+			status_text,
+			text=f"Checkbox group: click each option position ({count} added) | Press 'd' when done | Press 'q' to quit",
+		)
+
+	def start_new_field():
+		input_type = ask_input_type(root)
+		label = simpledialog.askstring("Label", "Enter field label:", parent=root) or ""
+		description = simpledialog.askstring("Description", "Enter field description:", parent=root) or ""
+
+		pending_field["active"] = True
+		pending_field["type"] = input_type
+		pending_field["label"] = label
+		pending_field["description"] = description
+		pending_field["step_index"] = 0
+		pending_field["coordinates"] = {}
+		pending_field["options"] = []
+
+		if input_type == "searchable_select":
+			update_status_searchable()
+		elif input_type == "checkbox_group":
+			update_status_checkbox_group()
+		else:
+			update_status_single_click()
 
 	def on_click(event):
+		if not pending_field["active"]:
+			return
+
 		x, y = event.x, event.y
-		current_points.append(Position(x, y))
 		draw_point(x, y)
 
-		if len(current_points) >= 2:
-			p1 = current_points[-2]
-			p2 = current_points[-1]
-			canvas.create_line(p1.x, p1.y, p2.x, p2.y, fill="lime", width=2)
+		if pending_field["type"] == "searchable_select":
+			step_index = pending_field["step_index"]
+			step_name = SEARCHABLE_SELECT_STEPS[step_index]
+			pending_field["coordinates"][step_name] = {"x": x, "y": y}
+			pending_field["step_index"] += 1
 
-		if len(current_points) == 4:
-			draw_polygon(current_points)
-			label = simpledialog.askstring("Label", "Enter field label:", parent=root) or ""
-			description = simpledialog.askstring("Description", "Enter field description:", parent=root) or ""
-			input_type = ask_input_type(root)
+			if pending_field["step_index"] == 3:
+				coords = pending_field["coordinates"]
+				detected_inputs.append(DetectedFormInput(
+					polygon=[],
+					input_label=pending_field["label"],
+					input_description=pending_field["description"],
+					input_type="searchable_select",
+					coordinates=coords.copy(),
+				))
+				# Draw label at dropdown position
+				draw_label(
+					coords["dropdown"]["x"], coords["dropdown"]["y"],
+					pending_field["label"], pending_field["description"],
+					"searchable_select",
+					f"dropdown→input→result"
+				)
+				pending_field["active"] = False
+				update_status()
+			else:
+				update_status_searchable()
+		elif pending_field["type"] == "checkbox_group":
+			# Ask for option label for this checkbox
+			option_label = simpledialog.askstring("Option Label", "Enter label for this checkbox option:", parent=root) or ""
+			pending_field["options"].append({"option_label": option_label, "x": x, "y": y})
+			draw_label(x, y, pending_field["label"], "", "checkbox", f"{option_label} ({x}, {y})")
+			update_status_checkbox_group()
+		else:
+			# Single click for text
 			detected_inputs.append(DetectedFormInput(
-				polygon=list(current_points),
-				input_label=label,
-				input_description=description,
-				input_type=input_type,
+				polygon=[Position(x, y)],
+				input_label=pending_field["label"],
+				input_description=pending_field["description"],
+				input_type=pending_field["type"],
 			))
-			current_points.clear()
+			draw_label(x, y, pending_field["label"], pending_field["description"], pending_field["type"], f"({x}, {y})")
+			pending_field["active"] = False
+			update_status()
 
+	def save_to_json():
+		filename = simpledialog.askstring("Save", "Enter filename (without .json):", parent=root)
+		if not filename:
+			return None
+		form_description = simpledialog.askstring("Description", "Enter form description:", parent=root) or ""
+
+		form_fields = []
+		for field in detected_inputs:
+			if field.input_type == "searchable_select":
+				form_fields.append({
+					"field_type": field.input_type,
+					"label": field.input_label,
+					"description": field.input_description,
+					"coordinates": field.coordinates,
+				})
+			elif field.input_type == "checkbox_group":
+				form_fields.append({
+					"field_type": field.input_type,
+					"label": field.input_label,
+					"description": field.input_description,
+					"options": field.coordinates.get("options", []),
+				})
+			else:
+				# Use single point (text input)
+				x = field.polygon[0].x if field.polygon else 0
+				y = field.polygon[0].y if field.polygon else 0
+				form_fields.append({
+					"field_type": field.input_type,
+					"label": field.input_label,
+					"description": field.input_description,
+					"x": x,
+					"y": y,
+				})
+
+		schema = {
+			"description": form_description,
+			"form_fields": form_fields,
+		}
+
+		forms_schema_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "forms_schema")
+		os.makedirs(forms_schema_dir, exist_ok=True)
+		filepath = os.path.join(forms_schema_dir, f"{filename}.json")
+
+		with open(filepath, "w", encoding="utf-8") as f:
+			json.dump(schema, f, indent=2, ensure_ascii=False)
+
+		print(f"Saved to {filepath}")
+		return filepath
+
+	def finish_checkbox_group():
+		if pending_field["options"]:
+			detected_inputs.append(DetectedFormInput(
+				polygon=[],
+				input_label=pending_field["label"],
+				input_description=pending_field["description"],
+				input_type="checkbox_group",
+				coordinates={"options": pending_field["options"].copy()},
+			))
+		pending_field["active"] = False
+		pending_field["options"] = []
 		update_status()
 
 	def on_key(event):
 		if event.char == "q":
+			save_to_json()
 			root.destroy()
+			# Switch back to previous desktop (Windows: Win+Ctrl+Left)
+			pyautogui.hotkey('win', 'ctrl', 'left')
+		elif event.char == "d" and pending_field["active"] and pending_field["type"] == "checkbox_group":
+			finish_checkbox_group()
+		elif event.char == "n" and not pending_field["active"]:
+			start_new_field()
 
 	canvas.bind("<Button-1>", on_click)
 	root.bind("<Key>", on_key)
 	update_status()
 	root.mainloop()
-
-	print(f"\n{'='*60}")
-	print(f"Detected {len(detected_inputs)} form input(s):")
-	print(f"{'='*60}")
-	for i, field in enumerate(detected_inputs):
-		corners = [(p.x, p.y) for p in field.polygon]
-		print(f"\n[{i}] input_label: {field.input_label!r}")
-		print(f"    input_description: {field.input_description!r}")
-		print(f"    input_type: {field.input_type!r}")
-		print(f"    polygon: {corners}")
-	print()
 
 	return detected_inputs
 
