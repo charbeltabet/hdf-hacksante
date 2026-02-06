@@ -1,4 +1,6 @@
 import json
+
+import pyautogui
 from services.form_filler import process_field
 
 
@@ -104,6 +106,11 @@ def fill_form_with_data(form_definition: dict, form_data: dict, delay_between: f
 
     results = []
     fields = form_definition.get("form_fields", [])
+
+    # here switch window
+    
+    pyautogui.hotkey('win', 'ctrl', 'right')
+    time.sleep(2.0)
 
     for i, field in enumerate(fields):
         field_type = field.get("field_type")

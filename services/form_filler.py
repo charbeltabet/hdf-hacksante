@@ -25,6 +25,7 @@ def handle_form_input(x: int, y: int, value: str, delay_before_type: float = 0.1
     """
     try:
         pyautogui.click(x, y)
+        pyautogui.click(x, y)
         time.sleep(delay_before_type)
 
         if value:
@@ -43,7 +44,7 @@ def handle_form_input(x: int, y: int, value: str, delay_before_type: float = 0.1
 
 def handle_searchable_select(coordinates: dict, search_value: str,
                               delay_after_open: float = 0.3,
-                              delay_after_type: float = 0.5) -> dict:
+                              delay_after_type: float = 3.0) -> dict:
     """
     Handles a searchable select/dropdown field.
 
@@ -64,9 +65,6 @@ def handle_searchable_select(coordinates: dict, search_value: str,
         input_field = coordinates.get('input', {})
         result = coordinates.get('result', {})
 
-        pyautogui.hotkey('win', 'ctrl', 'left')
-        time.sleep(0.5)
-
         # Step 1: Click the dropdown bar to open it
         pyautogui.click(dropdown.get('x'), dropdown.get('y'))
         time.sleep(delay_after_open)
@@ -84,6 +82,8 @@ def handle_searchable_select(coordinates: dict, search_value: str,
 
         # Step 5: Click the first result
         pyautogui.click(result.get('x'), result.get('y'))
+        pyautogui.click(result.get('x'), result.get('y'))
+
 
         return {
             "success": True,

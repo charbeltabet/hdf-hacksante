@@ -21,16 +21,16 @@
       "description": "What is the patient's habitual treatment medication",
       "coordinates": {
         "dropdown": {
-          "x": 254,
+          "x": 240,
           "y": 537
         },
         "input": {
-          "x": 256,
-          "y": 554
+          "x": 230,
+          "y": 570
         },
         "result": {
-          "x": 255,
-          "y": 572
+          "x": 218,
+          "y": 580
         }
       }
     },
