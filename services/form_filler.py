@@ -64,6 +64,9 @@ def handle_searchable_select(coordinates: dict, search_value: str,
         input_field = coordinates.get('input', {})
         result = coordinates.get('result', {})
 
+        pyautogui.hotkey('win', 'ctrl', 'left')
+        time.sleep(0.5)
+
         # Step 1: Click the dropdown bar to open it
         pyautogui.click(dropdown.get('x'), dropdown.get('y'))
         time.sleep(delay_after_open)
