@@ -80,7 +80,7 @@ if __name__ == "__main__":
 		}
 	]
 
-	context_index = 0
+	context_index = 2
 	parsed_context = parse_context(
 		path_or_text=context_array[context_index]["path_or_text"],
 		context_type=context_array[context_index]["context_type"],

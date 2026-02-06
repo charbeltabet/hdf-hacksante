@@ -2,8 +2,9 @@ from flask import Flask, render_template, request, jsonify
 import pyautogui
 import time
 import os
-
 from services.form_filler import process_field, process_fields_batch
+from services.context_parser import parse_context
+from utils.paths import PROJECT_ROOT
 from services.form_schema_generator import (
     generate_json_schema,
     generate_empty_form_data,
@@ -58,6 +59,7 @@ def submit():
             'click_position': {'x': x_pos, 'y': y_pos}
         })
     except Exception as e:
+        raise e
         return jsonify({'success': False, 'error': str(e)}), 400
 
 
@@ -108,6 +110,7 @@ def process_field_route():
             return jsonify(result), 400
 
     except Exception as e:
+        raise e
         return jsonify({"success": False, "error": str(e)}), 400
 
 
@@ -151,6 +154,7 @@ def process_fields_batch_route():
         return jsonify(result)
 
     except Exception as e:
+        raise e
         return jsonify({"success": False, "error": str(e)}), 400
 
 
@@ -287,6 +291,7 @@ def run_mock_test():
         })
 
     except Exception as e:
+        raise e
         return jsonify({"success": False, "error": str(e)}), 400
 
 
@@ -320,6 +325,7 @@ def get_form_schema(form_name):
         return jsonify(schema)
 
     except Exception as e:
+        raise e
         return jsonify({"success": False, "error": str(e)}), 400
 
 
@@ -342,6 +348,7 @@ def get_form_template(form_name):
         return jsonify(template)
 
     except Exception as e:
+        raise e
         return jsonify({"success": False, "error": str(e)}), 400
 
 
@@ -384,8 +391,33 @@ def fill_form(form_name):
         return jsonify(result)
 
     except Exception as e:
+        raise e
         return jsonify({"success": False, "error": str(e)}), 400
 
+
+@app.route('/form-context', methods=['GET'])
+def form_context_route():
+    return render_template('form_context.html')
+
+
+@app.route('/parse-context', methods=['POST'])
+def parse_context_route():
+    schema_path = os.path.join(PROJECT_ROOT, "forms_schema", "questionaire_schema.json")
+    result_schema = open(schema_path).read()
+
+    form_definition = os.path.join(PROJECT_ROOT, "forms_schema", "questionaire_schema.json")
+
+    path_or_text = "temp path or text"
+    content_type = request.headers.get('Content-Type', '')
+
+    form_data = parse_context(path_or_text, content_type, result_schema)
+    form_fill_result = fill_form_with_data(form_definition, form_data)
+
+    return jsonify({
+        "success": form_fill_result.get("success", False),
+        "form_data": form_data,
+        "fill_result": form_fill_result,
+    })
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=7500)
