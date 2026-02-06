@@ -4,8 +4,9 @@ class Position:
 		self.y = y
 
 class DetectedFormInput:
-	def __init__(self, polygon: list[Position], label: str, description: str):
+	def __init__(self, polygon: list[Position], input_label: str, input_description: str, input_type: str):
 		self.polygon = polygon
-		self.label = label
-		self.description = description
+		self.input_label = input_label
+		self.input_description = input_description
+		self.input_type = input_type
 	

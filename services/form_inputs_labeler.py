@@ -4,6 +4,25 @@ from PIL import ImageTk
 import pyautogui
 from services.form_inputs_detection import Position, DetectedFormInput
 
+INPUT_TYPES = ["checkbox", "searchable_select", "text"]
+
+def ask_input_type(parent):
+	dialog = tk.Toplevel(parent)
+	dialog.title("Input Type")
+	dialog.grab_set()
+	result = tk.StringVar(value=INPUT_TYPES[0])
+
+	tk.Label(dialog, text="Select input type:", font=("Helvetica", 14)).pack(pady=(10, 5))
+	for t in INPUT_TYPES:
+		tk.Radiobutton(dialog, text=t, variable=result, value=t, font=("Helvetica", 12)).pack(anchor=tk.W, padx=20)
+
+	def confirm():
+		dialog.destroy()
+
+	tk.Button(dialog, text="OK", command=confirm, font=("Helvetica", 12)).pack(pady=10)
+	dialog.wait_window()
+	return result.get()
+
 def run_labeler():
 	screenshot = pyautogui.screenshot()
 	screen_w, screen_h = screenshot.size
@@ -60,10 +79,12 @@ def run_labeler():
 			draw_polygon(current_points)
 			label = simpledialog.askstring("Label", "Enter field label:", parent=root) or ""
 			description = simpledialog.askstring("Description", "Enter field description:", parent=root) or ""
+			input_type = ask_input_type(root)
 			detected_inputs.append(DetectedFormInput(
 				polygon=list(current_points),
-				label=label,
-				description=description,
+				input_label=label,
+				input_description=description,
+				input_type=input_type,
 			))
 			current_points.clear()
 
@@ -83,8 +104,9 @@ def run_labeler():
 	print(f"{'='*60}")
 	for i, field in enumerate(detected_inputs):
 		corners = [(p.x, p.y) for p in field.polygon]
-		print(f"\n[{i}] label: {field.label!r}")
-		print(f"    description: {field.description!r}")
+		print(f"\n[{i}] input_label: {field.input_label!r}")
+		print(f"    input_description: {field.input_description!r}")
+		print(f"    input_type: {field.input_type!r}")
 		print(f"    polygon: {corners}")
 	print()
 
