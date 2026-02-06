@@ -44,6 +44,8 @@ MOONDREAM_API_KEY = os.getenv("MOONDREAM_API_KEY")
 def get_moondream_client():
 	return md.vl(api_key=MOONDREAM_API_KEY)
 	
+DEEPGRAM_API_KEY = os.getenv("DEEPGRAM_API_KEY")
+DEEPGRAM_BASE_URL = "https://api.deepgram.com/v1"
 
 if __name__ == "__main__":
 	moondream_client = get_moondream_client()

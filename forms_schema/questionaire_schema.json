@@ -73,14 +73,5 @@
       "uniqueItems": true
     }
   },
-  "required": [
-    "Reason of Hospitalization",
-    "What is the history of the patient's illness?",
-    "Habitual Treatment",
-    "Habitual Treatment (text)",
-    "Specific procedure needed to take the medication",
-    "Blood tests brought by the patient",
-    "imaging tests brought by the patient",
-    "Documents brought by the patient"
-  ]
+  "required": []
 }

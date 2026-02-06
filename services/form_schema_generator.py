@@ -2,7 +2,7 @@ import json
 from services.form_filler import process_field
 
 
-def generate_json_schema(form_definition: dict) -> dict:
+def generate_json_schema(form_definition: dict, require_all: bool = False) -> dict:
     """
     Generate a JSON Schema from a form definition (without coordinates).
 
@@ -54,7 +54,7 @@ def generate_json_schema(form_definition: dict) -> dict:
                 "uniqueItems": True
             }
 
-        schema["required"].append(label)
+        schema["required"].append(label) if require_all else None
 
     return schema
 
