@@ -13,7 +13,7 @@ class TextExtractor(dspy.Signature):
 	)
 
 class TextExtractorGenerator(dspy.Module):
-	def __init__(self, model_name: str = "openrouter/google/gemini-2.5-pro:nitro"):
+	def __init__(self, model_name: str = "openrouter/openai/gpt-oss-120b:nitro"):
 		self.lm = dspy.LM(
 			model_name,
 			api_key=OPENROUTER_API_KEY,
