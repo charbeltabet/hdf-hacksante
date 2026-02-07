@@ -630,7 +630,7 @@ document.addEventListener("DOMContentLoaded", function () {
         fieldSchema = data.field_schema || {};
 
         if (data.reasoning) {
-            reasoningText.textContent = data.reasoning;
+            reasoningText.innerHTML = renderMarkdown(data.reasoning);
             resultsReasoning.hidden = false;
         } else {
             resultsReasoning.hidden = true;

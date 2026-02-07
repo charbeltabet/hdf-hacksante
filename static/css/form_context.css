@@ -882,40 +882,40 @@ main {
     border-bottom-left-radius: 2px;
 }
 
-/* Markdown inside chat bubbles */
-.chat-bubble.markdown-body p {
+/* Markdown body styles (general) */
+.markdown-body p {
     margin: 0 0 0.5em 0;
 }
 
-.chat-bubble.markdown-body p:last-of-type {
+.markdown-body p:last-of-type {
     margin-bottom: 0;
 }
 
-.chat-bubble.markdown-body ul,
-.chat-bubble.markdown-body ol {
+.markdown-body ul,
+.markdown-body ol {
     margin: 0.375em 0;
     padding-left: 1.4em;
 }
 
-.chat-bubble.markdown-body li {
+.markdown-body li {
     margin-bottom: 0.2em;
     line-height: 1.45;
 }
 
-.chat-bubble.markdown-body li::marker {
+.markdown-body li::marker {
     color: #8e8e93;
 }
 
-.chat-bubble.markdown-body strong {
+.markdown-body strong {
     font-weight: 700;
     color: #0a0a0c;
 }
 
-.chat-bubble.markdown-body em {
+.markdown-body em {
     font-style: italic;
 }
 
-.chat-bubble.markdown-body code {
+.markdown-body code {
     font-size: 0.8125em;
     background: rgba(0, 0, 0, 0.08);
     padding: 0.125em 0.35em;
@@ -924,15 +924,15 @@ main {
     border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-.chat-bubble.markdown-body h1,
-.chat-bubble.markdown-body h2,
-.chat-bubble.markdown-body h3 {
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3 {
     font-size: 0.9375rem;
     font-weight: 600;
     margin: 0.5em 0 0.25em 0;
 }
 
-.chat-bubble.markdown-body blockquote {
+.markdown-body blockquote {
     margin: 0.375em 0;
     padding-left: 0.75em;
     border-left: 4px solid #b0b0b5;
