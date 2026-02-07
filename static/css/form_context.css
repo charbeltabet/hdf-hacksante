@@ -265,6 +265,53 @@ main {
     background: #ff3b30;
 }
 
+/* Camera captured state */
+.camera-live,
+.camera-captured {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.camera-captured {
+    position: relative;
+}
+
+.captured-image {
+    width: 100%;
+    max-height: 220px;
+    border-radius: 4px;
+    background: #111113;
+    object-fit: cover;
+    border: 2px solid #029db5;
+}
+
+.captured-retake {
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    border: 2px solid #111113;
+    border-radius: 4px;
+    background: #fff;
+    color: #111113;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.15s, border-color 0.15s;
+}
+
+.captured-retake:hover {
+    background: #f5f5f5;
+    border-color: #029db5;
+    color: #029db5;
+}
+
+.captured-retake svg {
+    flex-shrink: 0;
+}
+
 /* Upload */
 .upload-dropzone {
     display: flex;

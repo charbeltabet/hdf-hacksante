@@ -80,10 +80,23 @@
 
                 <!-- Camera mode -->
                 <div class="mode-panel" data-panel="camera">
-                    <video class="camera-preview" autoplay playsinline></video>
-                    <div class="camera-controls">
-                        <button class="capture-button" aria-label="Take photo">
-                            <span class="capture-ring"></span>
+                    <div class="camera-live">
+                        <video class="camera-preview" autoplay playsinline></video>
+                        <div class="camera-controls">
+                            <button class="capture-button" aria-label="Take photo">
+                                <span class="capture-ring"></span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="camera-captured" hidden>
+                        <img class="captured-image" alt="Captured photo">
+                        <button class="captured-retake" aria-label="Retake photo">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                                <path d="M23 4v6h-6" />
+                                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+                            </svg>
+                            <span>Retake</span>
                         </button>
                     </div>
                     <canvas class="camera-canvas" hidden></canvas>

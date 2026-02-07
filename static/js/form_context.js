@@ -8,6 +8,10 @@ document.addEventListener("DOMContentLoaded", function () {
     var cameraPreview = document.querySelector(".camera-preview");
     var captureButton = document.querySelector(".capture-button");
     var cameraCanvas = document.querySelector(".camera-canvas");
+    var cameraLive = document.querySelector(".camera-live");
+    var cameraCaptured = document.querySelector(".camera-captured");
+    var capturedImage = document.querySelector(".captured-image");
+    var capturedRetake = document.querySelector(".captured-retake");
     var cameraStream = null;
     var capturedBlob = null;
 
@@ -76,8 +80,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 p.classList.toggle("active", p.getAttribute("data-panel") === activeMode);
             });
 
-            if (activeMode === "camera") startCamera();
-            else stopCamera();
+            if (activeMode === "camera") {
+                // Reset camera state when switching to camera mode
+                if (!capturedBlob) {
+                    cameraLive.hidden = false;
+                    cameraCaptured.hidden = true;
+                    startCamera();
+                }
+            } else {
+                stopCamera();
+            }
 
             if (activeMode !== "voice") stopRecording();
 
@@ -488,9 +500,22 @@ document.addEventListener("DOMContentLoaded", function () {
         cameraCanvas.getContext("2d").drawImage(cameraPreview, 0, 0);
         cameraCanvas.toBlob(function (blob) {
             capturedBlob = blob;
-            captureButton.setAttribute("aria-pressed", "true");
+            // Show the captured image preview
+            capturedImage.src = URL.createObjectURL(blob);
+            cameraLive.hidden = true;
+            cameraCaptured.hidden = false;
+            stopCamera();
             updateSubmitState();
         }, "image/jpeg", 0.9);
+    });
+
+    capturedRetake.addEventListener("click", function () {
+        capturedBlob = null;
+        capturedImage.src = "";
+        cameraCaptured.hidden = true;
+        cameraLive.hidden = false;
+        startCamera();
+        updateSubmitState();
     });
 
     // --- Upload ---
