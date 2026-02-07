@@ -570,7 +570,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     var s = Math.floor((Date.now() - recordStartTime) / 1000);
                     voiceTimer.textContent =
                         String(Math.floor(s / 60)).padStart(2, "0") + ":" +
-                        String(s % 60).padStart(2, "0");
+                        String(s % 66).padStart(2, "0");
                 }, 250);
             })
             .catch(function () {
@@ -815,4 +815,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     updateSubmitState();
+
+    // Show role picker on initial load if chat is active
+    if (activeMode === "chat" && !chatStarted) showRolePicker();
 });
