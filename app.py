@@ -1,16 +1,29 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, Response
 import tempfile
 import ast
 import json
 import os
+import uuid
+import requests as http_requests
 from services.context_parser import parse_context
+from services.form_schema_chat import (
+    create_chat_session,
+    chat_message_stream,
+    finalize_stream,
+    parse_status_from_reply,
+    request_summary_stream,
+)
 from utils.paths import PROJECT_ROOT
+from utils.clients import DEEPGRAM_API_KEY, DEEPGRAM_BASE_URL
 from services.form_schema_generator import (
     fill_form_with_data,
     load_form_definition
 )
 
 app = Flask(__name__)
+app.secret_key = os.getenv("FLASK_SECRET_KEY", os.urandom(24))
+
+chat_sessions = {}
 
 SCHEMA_PATH = os.path.join(PROJECT_ROOT, "forms_schema", "questionaire_schema.json")
 FORM_DEF_PATH = os.path.join(PROJECT_ROOT, "forms_schema", "questionaire.json")
@@ -112,6 +125,140 @@ def parse_context_route():
         if tmp_path and os.path.exists(tmp_path):
             print(f"[parse-context] Cleaning up temp file: {tmp_path}")
             os.unlink(tmp_path)
+
+
+@app.route('/chat-start', methods=['POST'])
+def chat_start_route():
+    data = request.get_json(silent=True) or {}
+    role = data.get("role", "patient")
+
+    with open(SCHEMA_PATH, "r") as f:
+        schema_str = f.read()
+    session_id = str(uuid.uuid4())
+    messages = create_chat_session(schema_str, role=role)
+    chat_sessions[session_id] = messages
+
+    greeting = "Hello, I'm here for my appointment." if role == "patient" else "I need to enter patient intake data."
+
+    def generate():
+        stream, msgs = chat_message_stream(messages, greeting)
+        full_reply = ""
+        for chunk in stream:
+            delta = chunk.choices[0].delta
+            if delta.content:
+                full_reply += delta.content
+                yield f"data: {json.dumps({'token': delta.content})}\n\n"
+        visible_text, field_status = parse_status_from_reply(full_reply)
+        finalize_stream(msgs, full_reply)
+        # Remove the fake user message, keep system + assistant
+        chat_sessions[session_id] = [m for m in msgs if m["role"] != "user"]
+        done_payload = {'done': True, 'session_id': session_id}
+        if field_status:
+            done_payload['field_status'] = field_status
+            done_payload['visible_end'] = len(visible_text)
+        yield f"data: {json.dumps(done_payload)}\n\n"
+
+    return Response(generate(), mimetype="text/event-stream")
+
+
+@app.route('/chat-message', methods=['POST'])
+def chat_message_route():
+    data = request.get_json()
+    session_id = data.get("session_id")
+    user_msg = data.get("message", "")
+
+    if not session_id or session_id not in chat_sessions:
+        return jsonify({"error": "Invalid session"}), 400
+
+    messages = chat_sessions[session_id]
+
+    def generate():
+        stream, msgs = chat_message_stream(messages, user_msg)
+        full_reply = ""
+        for chunk in stream:
+            delta = chunk.choices[0].delta
+            if delta.content:
+                full_reply += delta.content
+                yield f"data: {json.dumps({'token': delta.content})}\n\n"
+        visible_text, field_status = parse_status_from_reply(full_reply)
+        finalize_stream(msgs, full_reply)
+        chat_sessions[session_id] = msgs
+        done_payload = {'done': True}
+        if field_status:
+            done_payload['field_status'] = field_status
+            done_payload['visible_end'] = len(visible_text)
+        yield f"data: {json.dumps(done_payload)}\n\n"
+
+    return Response(generate(), mimetype="text/event-stream")
+
+
+@app.route('/chat-summary', methods=['POST'])
+def chat_summary_route():
+    data = request.get_json()
+    session_id = data.get("session_id")
+
+    if not session_id or session_id not in chat_sessions:
+        return jsonify({"error": "Invalid session"}), 400
+
+    messages = chat_sessions[session_id]
+
+    def generate():
+        stream, msgs = request_summary_stream(messages)
+        full_reply = ""
+        for chunk in stream:
+            delta = chunk.choices[0].delta
+            if delta.content:
+                full_reply += delta.content
+                yield f"data: {json.dumps({'token': delta.content})}\n\n"
+        finalize_stream(msgs, full_reply)
+        chat_sessions[session_id] = msgs
+        yield f"data: {json.dumps({'done': True, 'summary': full_reply})}\n\n"
+
+    return Response(generate(), mimetype="text/event-stream")
+
+
+@app.route('/tts', methods=['POST'])
+def tts_route():
+    data = request.get_json()
+    text = data.get("text", "")
+    text = text.replace("*", "").replace("_", "").replace("`", "")
+    if not text:
+        return jsonify({"error": "No text provided"}), 400
+
+    resp = http_requests.post(
+        "https://api.deepgram.com/v1/speak?model=aura-2-thalia-en",
+        headers={
+            "Authorization": f"Token {DEEPGRAM_API_KEY}",
+            "Content-Type": "application/json",
+        },
+        json={"text": text},
+        stream=True,
+    )
+
+    return Response(
+        resp.iter_content(chunk_size=4096),
+        mimetype="audio/mpeg",
+    )
+
+
+@app.route('/stt', methods=['POST'])
+def stt_route():
+    file = request.files.get("file")
+    if not file:
+        return jsonify({"error": "No audio file"}), 400
+
+    audio_data = file.read()
+    resp = http_requests.post(
+        f"{DEEPGRAM_BASE_URL}/listen?smart_format=true&model=nova-3",
+        headers={
+            "Authorization": f"Token {DEEPGRAM_API_KEY}",
+            "Content-Type": file.content_type or "audio/webm",
+        },
+        data=audio_data,
+    )
+    result = resp.json()
+    transcript = result["results"]["channels"][0]["alternatives"][0]["transcript"]
+    return jsonify({"transcript": transcript})
 
 
 @app.route('/fill-form', methods=['POST'])

@@ -1,0 +1,9 @@
+see the new files added
+
+let the llm respond with some listed options for checkboxes please.
+
+```
+Thank you for the details regarding the reason for hospitalization and the habitual treatment medication. Next, does the patient take any medication that requires a specific procedure before ingestion, such as anticoagulants? Also, what blood tests has the patient brought with them?
+What are the options for the blood tests? What may the patient bring with them?
+The options for blood tests that the patient may bring with them include: - Bacteriology - Biochemistry - Hematology - Histopathology Could you please specify which of these tests the patient has brought? Additionally, if there are any specific procedures required for medication ingestion, such as anticoagulants, please let me know.
+```
