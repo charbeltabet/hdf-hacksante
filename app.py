@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, Response
+from flask import Flask, render_template, request, jsonify, Response, redirect
 import tempfile
 import ast
 import json
@@ -37,6 +37,9 @@ TYPE_MAP = {
     "json": "json",
 }
 
+@app.route('/')
+def index():
+    return redirect('/form-context')
 
 @app.route('/form-context', methods=['GET'])
 def form_context_route():

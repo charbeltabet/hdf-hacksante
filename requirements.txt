@@ -6,7 +6,6 @@ dspy
 boto3
 moondream
 Pillow
-tkinter
 keyboard
 pymupdf
 pandas
