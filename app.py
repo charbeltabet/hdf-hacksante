@@ -32,7 +32,9 @@ TYPE_MAP = {
     "text": "text",
     "image": "image",
     "audio": "audio",
-    "document": "image",
+    "document": "pdf",
+    "spreadsheet": "spreadsheet",
+    "json": "json",
 }
 
 

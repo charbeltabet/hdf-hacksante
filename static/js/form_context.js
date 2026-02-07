@@ -814,7 +814,16 @@ document.addEventListener("DOMContentLoaded", function () {
             fd.append("type", "image");
             fd.append("file", capturedBlob, "capture.jpg");
         } else if (activeMode === "upload" && uploadedFile) {
-            fd.append("type", uploadedFile.type.startsWith("image/") ? "image" : "document");
+            var fileType = "document";
+            var fileName = uploadedFile.name.toLowerCase();
+            if (uploadedFile.type.startsWith("image/")) {
+                fileType = "image";
+            } else if (fileName.endsWith(".csv") || fileName.endsWith(".xlsx") || fileName.endsWith(".xls")) {
+                fileType = "spreadsheet";
+            } else if (fileName.endsWith(".json")) {
+                fileType = "json";
+            }
+            fd.append("type", fileType);
             fd.append("file", uploadedFile, uploadedFile.name);
         } else if (activeMode === "voice" && recordedBlob) {
             fd.append("type", "audio");

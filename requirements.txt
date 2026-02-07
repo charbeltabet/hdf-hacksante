@@ -8,3 +8,6 @@ moondream
 Pillow
 tkinter
 keyboard
+pymupdf
+pandas
+openpyxl
