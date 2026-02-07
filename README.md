@@ -185,14 +185,12 @@ Auto-generated from the form definition by stripping out all coordinates. This i
 ## Getting Started
 
 ```bash
-# Clone
-git clone <repo-url>
-cd hsante
+# Activate your venv
 
 # Install dependencies
 pip install -r requirements.txt
 
-# Set environment variables
+# Set environment variables if you don't have them
 cp .env.example .env
 # Fill in: OPENROUTER_API_KEY, DEEPGRAM_API_KEY, R2 credentials
 
