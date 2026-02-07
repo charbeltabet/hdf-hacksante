@@ -13,24 +13,18 @@
     <main>
         <section class="input-card">
             <header class="input-header">
-                <div class="header-brand">
-                    <img src="/static/css/images/logo.png" alt="Logo" class="header-logo">
-                    <div class="header-text">
-                        <h1>AI Injestor</h1>
-                        <p class="header-description">Data will be injected into your current DX Care open form</p>
-                    </div>
-                </div>
+                <h1>Form Context</h1>
             </header>
 
             <nav class="mode-toolbar" role="tablist" aria-label="Input mode">
-                <button class="mode-button" role="tab" aria-selected="true" data-mode="chat">
+                <button class="mode-button" role="tab" aria-selected="false" data-mode="chat">
                     <svg class="mode-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                         stroke-linecap="round" stroke-linejoin="round">
                         <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
                     </svg>
                     <span>Chat</span>
                 </button>
-                <button class="mode-button" role="tab" aria-selected="false" data-mode="text">
+                <button class="mode-button" role="tab" aria-selected="true" data-mode="text">
                     <svg class="mode-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                         stroke-linecap="round" stroke-linejoin="round">
                         <path d="M17 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z" />
@@ -67,11 +61,12 @@
                     </svg>
                     <span>Voice</span>
                 </button>
+
             </nav>
 
             <div class="input-area">
                 <!-- Text mode -->
-                <div class="mode-panel" data-panel="text">
+                <div class="mode-panel active" data-panel="text">
                     <label class="text-field-label" for="context-text">Describe the patient context</label>
                     <textarea class="text-field" id="context-text" rows="8"
                         placeholder="Type or paste medical context here..."></textarea>
@@ -129,7 +124,7 @@
                 </div>
 
                 <!-- Chat mode -->
-                <div class="mode-panel active" data-panel="chat">
+                <div class="mode-panel" data-panel="chat">
                     <div class="chat-role-picker" id="chat-role-picker">
                         <p class="role-picker-label">I am a...</p>
                         <div class="role-picker-buttons">
