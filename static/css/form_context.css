@@ -356,6 +356,80 @@ main {
     color: #6b6b70;
 }
 
+/* File type badges */
+.upload-file-types {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-top: 0.25rem;
+}
+
+.file-type {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.3rem 0.6rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: 20px;
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.file-type:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.file-type svg {
+    flex-shrink: 0;
+}
+
+.file-type-image {
+    background: rgba(168, 85, 247, 0.15);
+    color: #7c3aed;
+}
+
+.file-type-image svg {
+    stroke: #7c3aed;
+}
+
+.file-type-pdf {
+    background: rgba(239, 68, 68, 0.15);
+    color: #dc2626;
+}
+
+.file-type-pdf svg {
+    stroke: #dc2626;
+}
+
+.file-type-csv {
+    background: rgba(34, 197, 94, 0.15);
+    color: #16a34a;
+}
+
+.file-type-csv svg {
+    stroke: #16a34a;
+}
+
+.file-type-excel {
+    background: rgba(34, 197, 94, 0.15);
+    color: #15803d;
+}
+
+.file-type-excel svg {
+    stroke: #15803d;
+}
+
+.file-type-json {
+    background: rgba(251, 146, 60, 0.15);
+    color: #ea580c;
+}
+
+.file-type-json svg {
+    stroke: #ea580c;
+}
+
 .upload-preview {
     display: flex;
     align-items: center;
