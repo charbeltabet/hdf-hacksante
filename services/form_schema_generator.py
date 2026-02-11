@@ -1,7 +1,6 @@
 import json
 
-import pyautogui
-from services.form_filler import process_field
+from services.form_filler import process_field, HAS_DISPLAY
 
 
 def generate_json_schema(form_definition: dict, require_all: bool = False) -> dict:
@@ -107,10 +106,11 @@ def fill_form_with_data(form_definition: dict, form_data: dict, delay_between: f
     results = []
     fields = form_definition.get("form_fields", [])
 
-    # here switch window
-    
-    pyautogui.hotkey('win', 'ctrl', 'right')
-    time.sleep(2.0)
+    if HAS_DISPLAY:
+        import pyautogui
+        # switch window
+        pyautogui.hotkey('win', 'ctrl', 'right')
+        time.sleep(2.0)
 
     for i, field in enumerate(fields):
         field_type = field.get("field_type")

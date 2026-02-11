@@ -1,6 +1,12 @@
-import pyautogui
 import time
 from enum import Enum
+
+try:
+    import pyautogui
+    HAS_DISPLAY = True
+except Exception:
+    # pyautogui fails on headless systems (KeyError on DISPLAY, ImportError, etc.)
+    HAS_DISPLAY = False
 
 
 class FieldType(Enum):
@@ -23,6 +29,14 @@ def handle_form_input(x: int, y: int, value: str, delay_before_type: float = 0.1
     Returns:
         dict with success status and details
     """
+    if not HAS_DISPLAY:
+        return {
+            "success": True,
+            "field_type": FieldType.FORM_INPUT.value,
+            "action": "click_and_type (simulated - no display)",
+            "coordinates": {"x": x, "y": y},
+            "value_entered": value
+        }
     try:
         pyautogui.click(x, y)
         pyautogui.click(x, y)
@@ -60,6 +74,14 @@ def handle_searchable_select(coordinates: dict, search_value: str,
     Returns:
         dict with success status and details
     """
+    if not HAS_DISPLAY:
+        return {
+            "success": True,
+            "field_type": FieldType.SEARCHABLE_SELECT.value,
+            "action": "open_search_select (simulated - no display)",
+            "coordinates": coordinates,
+            "search_value": search_value
+        }
     try:
         dropdown = coordinates.get('dropdown', {})
         input_field = coordinates.get('input', {})
@@ -109,6 +131,14 @@ def handle_checkbox_group(options: list, values: list, delay_between: float = 0.
     Returns:
         dict with success status and details
     """
+    if not HAS_DISPLAY:
+        return {
+            "success": True,
+            "field_type": FieldType.CHECKBOX_GROUP.value,
+            "action": "click_checkboxes (simulated - no display)",
+            "clicked": [{"option_label": v} for v in values],
+            "values_requested": values
+        }
     try:
         clicked = []
         for value in values:

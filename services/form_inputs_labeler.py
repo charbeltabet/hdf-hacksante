@@ -1,9 +1,15 @@
-import tkinter as tk
-from tkinter import simpledialog
-from PIL import ImageTk
-import pyautogui
 import json
 import os
+
+try:
+    import tkinter as tk
+    from tkinter import simpledialog
+    from PIL import ImageTk
+    import pyautogui
+    HAS_DISPLAY = True
+except Exception:
+    HAS_DISPLAY = False
+
 from services.form_inputs_detection import Position, DetectedFormInput
 
 INPUT_TYPES = ["checkbox_group", "searchable_select", "form_input"]
@@ -26,6 +32,9 @@ def ask_input_type(parent):
 	return result.get()
 
 def run_labeler():
+	if not HAS_DISPLAY:
+		print("Error: run_labeler requires a display (pyautogui + tkinter).")
+		return []
 	# Switch to next desktop (Windows: Win+Ctrl+Right)
 	pyautogui.hotkey('win', 'ctrl', 'right')
 	pyautogui.sleep(0.5)  # Wait for desktop switch animation

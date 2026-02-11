@@ -1,12 +1,14 @@
 flask
-pyautogui
 openai
 python-dotenv
 dspy
 boto3
 moondream
 Pillow
-keyboard
 pymupdf
 pandas
 openpyxl
+
+# Display-dependent (optional, for GUI form-filling features)
+# pyautogui
+# keyboard
