@@ -1,0 +1,36 @@
+service: hsante
+
+image: charbeltabet/hsante
+
+servers:
+  web:
+    - mh
+
+proxy:
+  ssl: true
+  host: hdf-hsante.tabet.tech
+  app_port: 7500
+
+registry:
+  server: "localhost:5555"
+  username:
+    - KAMAL_REGISTRY_USERNAME
+  password:
+    - KAMAL_REGISTRY_PASSWORD
+
+builder:
+  arch: amd64
+
+env:
+  secret:
+    - OPENROUTER_API_KEY
+    - OPENROUTER_BASE_URL
+    - CLOUDFLARE_TOKEN_VALUE
+    - CLOUDFLARE_ENDPOINT_URL
+    - CLOUDFLARE_ACCOUNT_ID
+    - CLOUDFLARE_ACCESS_KEY
+    - CLOUDFLARE_ACCESS_KEY_ID
+    - CLOUDFLARE_BUCKET
+    - MOONDREAM_API_KEY
+    - MOONDREAM_API_NAME
+    - DEEPGRAM_API_KEY
